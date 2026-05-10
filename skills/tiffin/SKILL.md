@@ -15,6 +15,7 @@ Tiffin is a tool for managing a database of meal items, categorized by courses a
   - **Auto-resolve**: If a single strong match is found, it is automatically selected.
   - **Ambiguity**: If multiple matches are found, the command exits with code `2`.
 - **Exact Match**: Use `--exact` to disable fuzzy matching and require a literal name match.
+- **Filtering**: `tiffin suggest` currently only supports a single course and a single occasion filter. Providing multiple (e.g., `tiffin suggest breakfast lunch`) will result in an error.
 - **Exit Codes**:
   - `0`: Success.
   - `1`: General error.
@@ -30,7 +31,7 @@ Tiffin is a tool for managing a database of meal items, categorized by courses a
 | `tiffin list occasions` | List all unique occasions present in the database. |
 | `tiffin list courses` | List all unique courses present in the database. |
 | `tiffin show <name> [--exact]` | Show full details for an item. Uses fuzzy matching by default unless `--exact` is passed. |
-| `tiffin suggest [course] [--for occasion]` | Randomly select an item, optionally filtered by course or occasion. |
+| `tiffin suggest [course] [--for occasion]` | Randomly select an item, filtered by a single course and occasion (multiple filters will error). |
 
 ## Common Agent Patterns
 

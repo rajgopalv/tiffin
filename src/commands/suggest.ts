@@ -6,6 +6,13 @@ export async function suggestCommand(courseRaw: string | undefined, options: { f
   const courseFilters = parseTags(courseRaw);
   const occasionFilters = parseTags(options.for);
 
+  // TODO: Support multiple filters in the database layer (Step 15 in todo.md)
+  if (courseFilters.length > 1 || occasionFilters.length > 1) {
+    out.error('The "suggest" command currently only supports a single course and a single occasion filter.');
+    out.jsonError({ error: 'Multiple filters not yet supported for suggest.' });
+    process.exit(1);
+  }
+
   const item = db.getRandomItem({ 
     course: courseFilters[0], 
     occasion: occasionFilters[0] 
