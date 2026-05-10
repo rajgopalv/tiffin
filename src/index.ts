@@ -1,5 +1,6 @@
 import { Command } from 'commander';
-import { setOutputOptions } from './output';
+import { setOutputOptions, getDbPath } from './output';
+import { initDb } from './db';
 
 const program = new Command();
 
@@ -12,6 +13,9 @@ program
   .hook('preAction', (thisCommand) => {
     const options = thisCommand.opts();
     setOutputOptions({ json: options.json });
+    
+    const dbPath = getDbPath(options.db);
+    initDb(dbPath);
   });
 
 program
