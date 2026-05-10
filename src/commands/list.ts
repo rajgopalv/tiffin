@@ -1,5 +1,6 @@
 import { out, isJsonMode } from '../output';
 import * as db from '../db';
+import { parseTags } from '../utils';
 
 export async function listCommand(nounOrCourse: string | undefined, options: { for?: string }) {
   if (nounOrCourse === 'courses') {
@@ -24,7 +25,13 @@ export async function listCommand(nounOrCourse: string | undefined, options: { f
     return;
   }
 
-  const items = db.getAllItems({ course: nounOrCourse, occasion: options.for });
+  const courseFilters = parseTags(nounOrCourse);
+  const occasionFilters = parseTags(options.for);
+
+  const items = db.getItemsFiltered({ 
+    course: courseFilters[0], 
+    occasion: occasionFilters[0] 
+  });
 
   if (items.length === 0) {
     const filterDesc = nounOrCourse || options.for ? ' matching filters' : '';

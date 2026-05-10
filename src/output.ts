@@ -3,6 +3,7 @@ import os from 'os';
 
 export interface OutputOptions {
   json?: boolean;
+  exact?: boolean;
 }
 
 let options: OutputOptions = {};
@@ -13,6 +14,10 @@ export function setOutputOptions(opts: OutputOptions) {
 
 export function isJsonMode(): boolean {
   return !!options.json;
+}
+
+export function isExactMode(): boolean {
+  return !!options.exact;
 }
 
 export const out = {

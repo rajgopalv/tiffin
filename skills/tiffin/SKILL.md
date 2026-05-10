@@ -11,10 +11,14 @@ Tiffin is a tool for managing a database of meal items, categorized by courses a
 
 - **JSON Mode**: Always pass `--json` for structured, machine-readable output.
 - **Database Path**: Use `--db <path>` to operate against a specific database file. Default is `~/.tiffin/tiffin.db`.
+- **Fuzzy Matching**: Commands like `show` use fuzzy matching by default.
+  - **Auto-resolve**: If a single strong match is found, it is automatically selected.
+  - **Ambiguity**: If multiple matches are found, the command exits with code `2`.
+- **Exact Match**: Use `--exact` to disable fuzzy matching and require a literal name match.
 - **Exit Codes**:
   - `0`: Success.
   - `1`: General error.
-  - `2`: No match found.
+  - `2`: No match found or ambiguous matches.
 - **Duplicate Add**: Adding an item that already exists exits with `0` but includes `"created": false` in the JSON output.
 
 ## Command Reference
@@ -25,7 +29,8 @@ Tiffin is a tool for managing a database of meal items, categorized by courses a
 | `tiffin list [course] [--for occasion]` | List items, optionally filtered by course or occasion. |
 | `tiffin list occasions` | List all unique occasions present in the database. |
 | `tiffin list courses` | List all unique courses present in the database. |
-| `tiffin show <name>` | Show full details for a specific item, including all associated tags. |
+| `tiffin show <name> [--exact]` | Show full details for an item. Uses fuzzy matching by default unless `--exact` is passed. |
+| `tiffin suggest [course] [--for occasion]` | Randomly select an item, optionally filtered by course or occasion. |
 
 ## Common Agent Patterns
 
@@ -37,7 +42,13 @@ tiffin --json add "Banana Waffles" breakfast --for "camping" "school day"
 ### Checking if an item exists before adding
 ```bash
 tiffin --json show "Dosa"
-# If exit code is 2, item doesn't exist.
+# If exit code is 2, item doesn't exist or is ambiguous.
+```
+
+### Forcing an exact match
+```bash
+tiffin --json show "Dosa" --exact
+# Fails if "Dosa" is not the literal name, even if "Dosa (Plain)" exists.
 ```
 
 ### Listing items for a specific context
@@ -49,6 +60,11 @@ tiffin --json list breakfast --for "indian festival"
 ```bash
 tiffin --json list courses
 tiffin --json list occasions
+```
+
+### Randomly suggesting a meal
+```bash
+tiffin --json suggest lunch --for "quick"
 ```
 
 ## Data Model

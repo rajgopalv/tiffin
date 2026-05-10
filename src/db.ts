@@ -100,11 +100,11 @@ export interface ItemDetail {
   occasions: string[];
 }
 
-export function getAllItems(filters: { course?: string; occasion?: string } = {}): ItemDetail[] {
+export function getItemsFiltered(filters: { course?: string; occasion?: string } = {}, random: boolean = false): ItemDetail[] {
   let query = `
     SELECT i.id, i.name, 
-           GROUP_CONCAT(DISTINCT c.name) as courses, 
-           GROUP_CONCAT(DISTINCT o.name) as occasions
+           GROUP_CONCAT(c.name, ' | ') as courses, 
+           GROUP_CONCAT(o.name, ' | ') as occasions
     FROM items i
     LEFT JOIN item_courses ic ON i.id = ic.item_id
     LEFT JOIN courses c ON ic.course_id = c.id
@@ -129,23 +129,38 @@ export function getAllItems(filters: { course?: string; occasion?: string } = {}
     query += ` WHERE ` + whereClauses.join(' AND ');
   }
 
-  query += ` GROUP BY i.id ORDER BY i.name ASC`;
+  query += ` GROUP BY i.id`;
+  
+  if (random) {
+    query += ` ORDER BY RANDOM() LIMIT 1`;
+  } else {
+    query += ` ORDER BY i.name ASC`;
+  }
 
   const rows = getDb().prepare(query).all(...params) as any[];
   
   return rows.map(row => ({
     id: row.id,
     name: row.name,
-    courses: row.courses ? row.courses.split(',') : [],
-    occasions: row.occasions ? row.occasions.split(',') : []
+    courses: row.courses ? ([...new Set(row.courses.split(' | '))] as string[]) : [],
+    occasions: row.occasions ? ([...new Set(row.occasions.split(' | '))] as string[]) : []
   }));
+}
+
+export function getRandomItem(filters: { course?: string; occasion?: string } = {}): ItemDetail | undefined {
+  const items = getItemsFiltered(filters, true);
+  return items[0];
+}
+
+export function getAllItems(): { id: number; name: string }[] {
+  return getDb().prepare('SELECT id, name FROM items').all() as { id: number; name: string }[];
 }
 
 export function getItemDetail(name: string): ItemDetail | undefined {
   const query = `
     SELECT i.id, i.name, 
-           GROUP_CONCAT(DISTINCT c.name) as courses, 
-           GROUP_CONCAT(DISTINCT o.name) as occasions
+           GROUP_CONCAT(c.name, ' | ') as courses, 
+           GROUP_CONCAT(o.name, ' | ') as occasions
     FROM items i
     LEFT JOIN item_courses ic ON i.id = ic.item_id
     LEFT JOIN courses c ON ic.course_id = c.id
@@ -161,8 +176,8 @@ export function getItemDetail(name: string): ItemDetail | undefined {
   return {
     id: row.id,
     name: row.name,
-    courses: row.courses ? row.courses.split(',') : [],
-    occasions: row.occasions ? row.occasions.split(',') : []
+    courses: row.courses ? ([...new Set(row.courses.split(' | '))] as string[]) : [],
+    occasions: row.occasions ? ([...new Set(row.occasions.split(' | '))] as string[]) : []
   };
 }
 
