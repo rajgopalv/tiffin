@@ -18,15 +18,29 @@ program
     initDb(dbPath);
   });
 
+import { addCommand } from './commands/add';
+import { listCommand } from './commands/list';
+import { showCommand } from './commands/show';
+
 program
   .command('add')
   .description('Add a new item')
   .argument('<name>', 'Item name')
   .argument('[courses...]', 'Courses for the item')
   .option('--for <occasions...>', 'Occasions for the item')
-  .action((name, courses, options) => {
-    // Placeholder for Step 3
-    console.log(`Adding ${name} with courses ${courses} and occasions ${options.for}`);
-  });
+  .action(addCommand);
+
+program
+  .command('list')
+  .description('List all items')
+  .argument('[course]', 'Filter by course')
+  .option('--for <occasion>', 'Filter by occasion')
+  .action(listCommand);
+
+program
+  .command('show')
+  .description('Show full detail for one item')
+  .argument('<name>', 'Item name')
+  .action(showCommand);
 
 program.parse();

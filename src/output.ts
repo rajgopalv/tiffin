@@ -11,6 +11,10 @@ export function setOutputOptions(opts: OutputOptions) {
   options = opts;
 }
 
+export function isJsonMode(): boolean {
+  return !!options.json;
+}
+
 export const out = {
   success(msg: string) {
     if (options.json) return;
