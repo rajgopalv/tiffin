@@ -112,3 +112,5 @@ typings/
 # Internal docs
 plan.md
 plan
+
+.db:
