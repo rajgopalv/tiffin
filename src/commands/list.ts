@@ -1,17 +1,39 @@
 import { out, isJsonMode } from '../output';
 import * as db from '../db';
 
-export async function listCommand(course: string | undefined, options: { for?: string }) {
-  const items = db.getAllItems({ course, occasion: options.for });
+export async function listCommand(nounOrCourse: string | undefined, options: { for?: string }) {
+  if (nounOrCourse === 'courses') {
+    const courses = db.getCourses();
+    if (!isJsonMode()) {
+      console.log('\nCourses');
+      console.log('───────');
+      courses.forEach(c => console.log(` ${c}`));
+    }
+    out.json({ courses });
+    return;
+  }
+
+  if (nounOrCourse === 'occasions') {
+    const occasions = db.getOccasions();
+    if (!isJsonMode()) {
+      console.log('\nOccasions');
+      console.log('─────────');
+      occasions.forEach(o => console.log(` ${o}`));
+    }
+    out.json({ occasions });
+    return;
+  }
+
+  const items = db.getAllItems({ course: nounOrCourse, occasion: options.for });
 
   if (items.length === 0) {
-    const filterDesc = course || options.for ? ' matching filters' : '';
+    const filterDesc = nounOrCourse || options.for ? ' matching filters' : '';
     out.info(`No items found${filterDesc}.`);
     out.json({ items: [] });
     return;
   }
 
-  const title = course ? `Items › ${course}` : 'Items';
+  const title = nounOrCourse ? `Items › ${nounOrCourse}` : 'Items';
   const subtitle = options.for ? ` (Occasion: ${options.for})` : '';
   
   if (!isJsonMode()) {

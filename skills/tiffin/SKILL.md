@@ -23,6 +23,8 @@ Tiffin is a tool for managing a database of meal items, categorized by courses a
 |---------|-------------|
 | `tiffin add <name> [courses...] [--for occasions...]` | Add a new meal item with optional courses and occasions. |
 | `tiffin list [course] [--for occasion]` | List items, optionally filtered by course or occasion. |
+| `tiffin list occasions` | List all unique occasions present in the database. |
+| `tiffin list courses` | List all unique courses present in the database. |
 | `tiffin show <name>` | Show full details for a specific item, including all associated tags. |
 
 ## Common Agent Patterns
@@ -41,6 +43,12 @@ tiffin --json show "Dosa"
 ### Listing items for a specific context
 ```bash
 tiffin --json list breakfast --for "indian festival"
+```
+
+### Listing available tags
+```bash
+tiffin --json list courses
+tiffin --json list occasions
 ```
 
 ## Data Model

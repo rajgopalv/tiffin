@@ -165,3 +165,13 @@ export function getItemDetail(name: string): ItemDetail | undefined {
     occasions: row.occasions ? row.occasions.split(',') : []
   };
 }
+
+export function getCourses(): string[] {
+  const rows = getDb().prepare('SELECT name FROM courses ORDER BY name ASC').all() as { name: string }[];
+  return rows.map(r => r.name);
+}
+
+export function getOccasions(): string[] {
+  const rows = getDb().prepare('SELECT name FROM occasions ORDER BY name ASC').all() as { name: string }[];
+  return rows.map(r => r.name);
+}
